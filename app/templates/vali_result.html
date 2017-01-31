@@ -1,0 +1,58 @@
+<head>
+<meta charset="UTF-8">
+<title>Account validation</title>
+    <link rel="stylesheet" type="text/css" href="/static/ra-sales.css">
+
+</head>
+
+<body>
+<h2>
+<!--Head Start: the place to put banner and logo of IU-->
+           <div id="branding-bar-v1" itemscope="itemscope" itemtype="http://schema.org/CollegeOrUniversity">
+	<div class="bar">
+		<div class="wrapper">
+			<p class="campus">
+				<img src="//assets.iu.edu/brand/legacy/trident-large.png" height="73" width="64" alt=" " />
+				<a href="http://www.iu.edu"> Indiana University</a>
+		</div>
+	</div>
+ </div>
+</h2>
+<h3>
+				<a class="linkbutton" href="/index">Index</a>
+				<a class="linkbutton" href="/search">Search</a>
+				<a class="linkbutton" href="/validate">Account Validation</a>
+</h3>
+				
+			</p>
+
+
+<div align="center">
+    <h1>Research Analytics Software Sale Information Input System</h1>
+</div>
+<div align="center">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='ra-sales.css') }}">
+</head>
+<body>
+    <h1>Results of Account Validation</h1>
+    <table>
+    <thead>
+       <tr>
+       <th>Account Number</th>
+       <th>Subaccount</th>
+       <th>Subaccount description</th>
+       <th>Status</th>
+
+       </tr>
+    </thead>
+   {%  for a in accounts %}
+        <tr>
+           <td>{{ a[1] }}</td> <!--account number-->
+           <td>{{ a[2] }}</td> <!--sub_account-->
+           <td>{{ a[3] }}</td> <!--description-->
+           <td>{{ a[4] }}</td> <!--status-->
+
+        </tr>
+   {%  endfor %}
+    </table>
+</div>
