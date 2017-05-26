@@ -1,8 +1,9 @@
 from flask import Flask, render_template, json, request, url_for, redirect
 import MySQLdb
 import cx_Oracle
-
-
+import base64
+import time
+import os, glob
 
 app = Flask(__name__)
 
@@ -15,7 +16,7 @@ def index():
 
 @app.route('/add-sale', methods=['GET', 'POST'])
 def input():
-    conn=MySQLdb.connect(user="root", host="localhost", db="rasales")
+    conn=MySQLdb.connect(user="root", host="localhost", db="rasale")
     cursor = conn.cursor()
     try:
         date_soldon       = request.form['soldondate']
@@ -25,7 +26,8 @@ def input():
         emailextension    = request.form['emailList']
         email             = username +'@'+ emailextension
         itemtitle         = request.form['title'] #drop-down menu
-        itemtype          = request.form['itemtypes'] #Radio Button                    
+        itemtype          = request.form['itemtypes'] #Radio Button
+        salestype         = request.form['salestype'] #Radio Button
         objectcode        = request.form['objectcode'] 
         subobjcode        = request.form['subobjcode']
         formnumber        = request.form['formnumber']
@@ -35,40 +37,40 @@ def input():
         
         # validate the received values
 
-        if date_soldon and username and departmentaccount and email and objectcode and itemtype and itemtitle and subobjcode and formnumber and price and quantity and total:        
+        if date_soldon and username and departmentaccount and email and objectcode and itemtype and salestype and itemtitle and subobjcode and formnumber and price and quantity and total:        
 
             
             # All Good, let's call MySQL
             cursor.execute('select ID_USER from users WHERE user_name = %s AND email = %s', (username,email))
             userid  = cursor.fetchone()
-            cursor.execute('select ID_ACCOUNT from accounts WHERE account_number = %s AND sub_account = %s', (departmentaccount,subaccount))
+            cursor.execute('select ID_ACC_AUTO from accounts WHERE account_number = %s AND sub_account = %s', (departmentaccount,subaccount))
             accid   = cursor.fetchone()
-            cursor.execute('select max(id_account) from accounts')
+            cursor.execute('select max(id_acc_auto) from accounts')
             maxid   = cursor.fetchone()
             if not userid and not accid:
                 cursor.execute('insert into users (user_name, email) values (%s, %s) ',
                                (username,email))
-                cursor.execute('insert into accounts (account_number, sub_account, id_user, id_account) values (%s, %s, LAST_INSERT_ID(), LAST_INSERT_ID())',
+                cursor.execute('insert into accounts (account_number, sub_account, id_user, id_acc_auto) values (%s, %s, LAST_INSERT_ID(), LAST_INSERT_ID())',
                                (departmentaccount,subaccount))
-                cursor.execute('insert into orders (date_soldon, item_title, obj_code, sub_objcode, item_type, quantity, price_per_copy, total_cost, id_acc_auto, formnumber) values (%s, %s, %s, %s, %s, %s, %s, %s, LAST_INSERT_ID(), %s)',
-                               (date_soldon, itemtitle, objectcode, subobjcode, itemtype, quantity, price, total, formnumber))
+                cursor.execute('insert into orders (date_soldon, item_title, obj_code, sub_objcode, item_type, sales_type, quantity, price_per_copy, total_cost, id_acc_auto, formnumber) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, LAST_INSERT_ID(), %s)',
+                               (date_soldon, itemtitle, objectcode, subobjcode, itemtype, sales_type, esquantity, price, total, formnumber))
             elif userid and accid:
-		cursor.execute('insert into accounts (account_number, sub_account, id_user, id_account) values (%s, %s, %s, %s)',
+		cursor.execute('insert into accounts (account_number, sub_account, id_user, id_acc_auto) values (%s, %s, %s, %s)',
                                (departmentaccount,subaccount, userid, accid))
-                cursor.execute('insert into orders (date_soldon, item_title, obj_code, sub_objcode, item_type, quantity, price_per_copy, total_cost, id_acc_auto, formnumber) values (%s, %s, %s, %s, %s, %s, %s, %s, LAST_INSERT_ID(), %s)',
-				(date_soldon, itemtitle, objectcode, subobjcode, itemtype, quantity, price, total, formnumber))
+                cursor.execute('insert into orders (date_soldon, item_title, obj_code, sub_objcode, item_type, sales_type, quantity, price_per_copy, total_cost, id_acc_auto, formnumber) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, LAST_INSERT_ID(), %s)',
+				(date_soldon, itemtitle, objectcode, subobjcode, itemtype, sales_type, quantity, price, total, formnumber))
             elif not userid and accid:
                 cursor.execute('insert into users (user_name, email) values (%s, %s) ',
                                (username,email))
 		cursor.execute('insert into accounts (account_number, sub_account, id_account, id_user) values (%s, %s, %s, LAST_INSERT_ID())',
 			       (departmentaccount, subaccount, accid))
-                cursor.execute('insert into orders (date_soldon, item_title, obj_code, sub_objcode, item_type, quantity, price_per_copy, total_cost, id_acc_auto, formnumber) values (%s, %s, %s, %s, %s, %s, %s, %s, LAST_INSERT_ID(), %s)',
-                               (date_soldon, itemtitle, objectcode, subobjcode, itemtype, quantity, price, total, formnumber))
+                cursor.execute('insert into orders (date_soldon, item_title, obj_code, sub_objcode, item_type, sales_type, quantity, price_per_copy, total_cost, id_acc_auto, formnumber) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, LAST_INSERT_ID(), %s)',
+                               (date_soldon, itemtitle, objectcode, subobjcode, itemtype, sales_type, quantity, price, total, formnumber))
             else: #if userid and not accid
                 cursor.execute('insert into accounts (account_number, sub_account, id_user, id_account) values (%s, %s, %s, %s+1)',
                                (departmentaccount,subaccount,userid, maxid))
-                cursor.execute('insert into orders (date_soldon, item_title, obj_code, sub_objcode, item_type, quantity, price_per_copy, total_cost, id_acc_auto, formnumber) values (%s, %s, %s, %s, %s, %s, %s, %s, LAST_INSERT_ID(), %s)',
-                               (date_soldon, itemtitle, objectcode, subobjcode, itemtype, quantity, price, total, formnumber))
+                cursor.execute('insert into orders (date_soldon, item_title, obj_code, sub_objcode, item_type, sales_type, quantity, price_per_copy, total_cost, id_acc_auto, formnumber) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, LAST_INSERT_ID(), %s)',
+                               (date_soldon, itemtitle, objectcode, subobjcode, itemtype, sales_type, quantity, price, total, formnumber))
             new_id = cursor.lastrowid
             conn.commit() #submit and save data
             return render_template('success.html', id=new_id)
@@ -87,7 +89,7 @@ def search_page():
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-    conn=MySQLdb.connect(user="root", host="localhost", db="rasales")
+    conn=MySQLdb.connect(user="root", host="localhost", db="rasale")
     cursor = conn.cursor()
     try:
         username = request.form['username']
@@ -169,6 +171,114 @@ def search():
       cursor.close()
       conn.close()
 
+#Export
+@app.route('/export')
+def export_page():
+    return render_template('export.html')
+
+@app.route('/export', methods=['GET', 'POST'])
+def export():
+    conn=MySQLdb.connect(user="root", host="localhost", db="rasale")
+    cursor = conn.cursor()
+    try:
+        username = request.form['username']
+        date1    = request.form['date1']
+        date2    = request.form['date2']
+        software = request.form['software']
+
+
+        if username or software or date1 or date2:
+            os.chdir('C:/myproject/app/templates')
+            filename = glob.glob('*.csv')
+            path = 'C:/myproject/app/templates/' + str(filename).strip("'[]'")
+            try:
+                os.remove(path)
+            except OSError:
+                pass         
+            cursor.execute('select id_user from users where user_name= "{!s}"'.format(username))
+            idu    = cursor.fetchone()
+            cursor.execute('select id_order from orders where item_title= "{!s}"'.format(software))
+            ids   = cursor.fetchone()
+            cursor.execute('select id_acc_auto from orders where date_soldon BETWEEN "{!s}" AND "{!s}"'.format(date1, date2))
+            idacc  = cursor.fetchone()
+        ## only username input
+            if username and not(software or date1 or date2):
+                cursor.execute('select id_user from users where user_name= "{!s}"'.format(username))
+                iduser = cursor.fetchone()
+                if iduser:
+                    cursor.execute('select * from users, accounts, orders where users.id_user=accounts.id_user AND accounts.id_acc_auto=orders.id_acc_auto AND users.user_name= "{!s}"\
+                                    INTO OUTFILE "C:/myproject/app/templates/export.csv" FIELDS TERMINATED BY "," LINES TERMINATED BY "\n"'.format(username))
+                    conn.commit()
+                    return render_template('export_success.html')
+                else:
+                    return "No user found"
+        ## only dates input
+            elif date1 and date2 and not (username or software):
+                if idacc:
+                    cursor.execute('select * from users, accounts, orders where users.id_user=accounts.id_user AND accounts.id_acc_auto=orders.id_acc_auto AND orders.date_soldon BETWEEN "{!s}" AND "{!s}"\
+                                    INTO OUTFILE "C:/myproject/app/templates/export.csv" FIELDS TERMINATED BY "," LINES TERMINATED BY "\n"'.format(date1, date2))
+                    conn.commit()
+                    return render_template('export_success.html')
+                else:
+                    return "No records in this date range found"
+        ## only software input
+            elif software and not (date1 or date2 or username):
+                if ids:
+                    cursor.execute('select * from users, accounts, orders where users.id_user=accounts.id_user AND accounts.id_acc_auto=orders.id_acc_auto AND orders.item_title= "{!s}"\
+                                    INTO OUTFILE "C:/myproject/app/templates/export.csv" FIELDS TERMINATED BY "," LINES TERMINATED BY "\n"'.format(software))
+                    conn.commit()
+                    return render_template('export_success.html')
+                else:
+                    return "No records for this product"                
+        ## username and dates input
+            elif username and date1 and date2:
+                if idu and idacc:
+                    cursor.execute('select * from users, accounts, orders where users.id_user=accounts.id_user AND accounts.id_acc_auto=orders.id_acc_auto AND users.user_name= "{!s}" \
+                                    AND orders.date_soldon BETWEEN "{!s}" AND "{!s}"\
+                                    INTO OUTFILE "C:/myproject/app/templates/export.csv" FIELDS TERMINATED BY "," LINES TERMINATED BY "\n"'.format(username, date1, date2))
+                    conn.commit()
+                    return render_template('export_success.html')
+                else:
+                    return "No user in this date range found"
+        ## username and software input
+            elif username and software:
+                if idu and ids:
+                    cursor.execute('select * from users, accounts, orders where users.id_user=accounts.id_user AND accounts.id_acc_auto=orders.id_acc_auto AND users.user_name= "{!s}" \
+                                    AND orders.item_title= "{!s}"\
+                                    INTO OUTFILE "C:/myproject/app/templates/export.csv" FIELDS TERMINATED BY "," LINES TERMINATED BY "\n"'.format(username, software))
+                    conn.commit()
+                    return render_template('export_success.html')
+                else:
+                    return "This user did not purchase this product"
+        ## software and datas input
+            elif software and date1 and date2:
+                if ids and idacc:
+                    cursor.execute('select * from users, accounts, orders where users.id_user=accounts.id_user AND accounts.id_acc_auto=orders.id_acc_auto AND orders.item_title= "{!s}" \
+                                    AND orders.date_soldon BETWEEN "{!s}" AND "{!s}"\
+                                    INTO OUTFILE "C:/myproject/app/templates/export.csv" FIELDS TERMINATED BY "," LINES TERMINATED BY "\n"'.format(software, date1, date2))
+                    conn.commit()
+                    return render_template('export_success.html')
+                else:
+                    return "No records found in this date range for this product"
+        ## all input
+            elif username and software and date1 and date2:
+                if idu and idacc and ids:
+                    cursor.execute('select * from users, accounts, orders where users.id_user=accounts.id_user AND accounts.id_acc_auto=orders.id_acc_auto AND users.user_name= "{!s}" \
+                                    AND orders.item_title= "{!s}" AND orders.date_soldon BETWEEN "{!s}" AND "{!s}"\
+                                    INTO OUTFILE "C:/myproject/app/templates/export.csv" FIELDS TERMINATED BY ","  LINES TERMINATED BY "\n"'.format(username, software, date1, date2))
+                    conn.commit()
+                    return render_template('export_success.html')
+                else:
+                    return "No records found"
+        ## nothing input
+        else:
+            return "Please enter the required fields"
+
+    finally:
+      cursor.close()
+      conn.close()
+
+      
 
 #validate
 @app.route('/validate')
@@ -177,9 +287,10 @@ def validate_page():
 
 #select account numbers
 @app.route('/validate', methods=['GET', 'POST'])
+
 def validate():
-   
-    conn   = cx_Oracle.connect('hpastats','klj06mq','esdbd100.uits.indiana.edu:1521/DSS1PRD.uits.indiana.edu')
+
+    conn   = cx_Oracle.connect('hpastats', base64.b64decode('a2xqMDZtcQ=='),'esdbd100.uits.indiana.edu:1521/DSS1PRD.uits.indiana.edu')
     cursor = conn.cursor ()
 
     try:
@@ -189,9 +300,14 @@ def validate():
             a = acc.splitlines()
             options = []
             for query in a:
-                nbr = query.split()[0]
-                sub = query.split()[1]
-                cursor.execute("select * from DSS_KFS.CA_SUBACCT_GT where ACCOUNT_NBR= '{!s}' and SUB_ACCT_NBR= '{!s}'".format(nbr, sub))
+                thing = query.split()
+                if len(thing) == 2:
+                    nbr = query.split()[0]
+                    sub = query.split()[1]
+                    cursor.execute("select * from DSS_KFS.CA_SUBACCT_GT where ACCOUNT_NBR= '{!s}' and SUB_ACCT_NBR= '{!s}'".format(nbr, sub))
+                elif len(thing) == 1:
+                    nbr = query.split()[0]
+                    cursor.execute("select * from DSS_KFS.CA_SUBACCT_GT where ACCOUNT_NBR= '{!s}'".format(nbr))
                 for row in cursor.fetchall():
                     options.append(row)
                 conn.commit()
