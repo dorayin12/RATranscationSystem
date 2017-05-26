@@ -1,6 +1,8 @@
+
+<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
-<title>Results of Account validation</title>
+<title>Export</title>
     <link rel="stylesheet" type="text/css" href="/static/ra-sales.css">
 
 </head>
@@ -32,28 +34,29 @@
     <h1>Research Analytics Software Sale Information Input System</h1>
 </div>
 <div align="center">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='ra-sales.css') }}">
-</head>
-<body>
-    <h1>Results of Account Validation</h1>
-    <table>
-    <thead>
-       <tr>
-       <th>Account Number</th>
-       <th>Subaccount</th>
-       <th>Subaccount description</th>
-       <th>Status</th>
-
-       </tr>
-    </thead>
-   {%  for a in accounts %}
-        <tr>
-           <td>{{ a[1] }}</td> <!--account number-->
-           <td>{{ a[2] }}</td> <!--sub_account-->
-           <td>{{ a[3] }}</td> <!--description-->
-           <td>{{ a[4] }}</td> <!--status-->
-
-        </tr>
-   {%  endfor %}
-    </table>
-</div>
+<h3>Export Data from Database<br><br></h3>
+Username: 
+<form name="username" method="post" action="export">
+    <input name="username" type="text" size="40">
+<br><br>
+</p>
+<p>
+Software: 
+<br><br>
+<form name="software" method="post" action="export">
+    <input name="software" type="text" size="40">
+<br><br>
+</p>
+<p>
+Date Range (yyyy-mm-dd):
+<br>
+</p>
+<p>
+<form name="timerange" method="post" action="export">
+    Start Date:
+    <input name="date1" type="text" size="20", placeholder="start date">
+	<br><br>
+	End Date:
+	<input name="date2" type="text" size="20", placeholder="end date">
+	<br><br>
+	<button type="submit">Submit!</button>

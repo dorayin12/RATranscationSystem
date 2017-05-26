@@ -23,6 +23,7 @@
 <h3>
 				<a class="linkbutton" href="/index">Index</a>
 				<a class="linkbutton" href="/search">Search</a>
+				<a class="linkbutton" href="/export">Export</a>
 				<a class="linkbutton" href="/validate">Account Validation</a>
 </h3>
 				
@@ -37,7 +38,10 @@
 <form action="validate" method="post" id="validate">
     <textarea name="accounts" type = "text" cols="20" rows="20"></textarea>
          <br><br>
-	*Please fill the box with account numbers and sub-accounts
+	*Please fill the box with account numbers and sub-accounts<br>
+	 Format: 1234567	AAA <br>
+	 Leave sub-accounts blank if you do not know them.
+
 	      <br><br>
     <input type="submit" name="submit" value="Verify" />
 </form>

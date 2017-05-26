@@ -1,6 +1,8 @@
+
+<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
-<title>Results of Account validation</title>
+<title>Research Analytics Software Sale Information Input System</title>
     <link rel="stylesheet" type="text/css" href="/static/ra-sales.css">
 
 </head>
@@ -28,32 +30,16 @@
 			</p>
 
 
+
 <div align="center">
     <h1>Research Analytics Software Sale Information Input System</h1>
-</div>
-<div align="center">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='ra-sales.css') }}">
+<head>
+    <meta charset="UTF-8">
 </head>
 <body>
-    <h1>Results of Account Validation</h1>
-    <table>
-    <thead>
-       <tr>
-       <th>Account Number</th>
-       <th>Subaccount</th>
-       <th>Subaccount description</th>
-       <th>Status</th>
-
-       </tr>
-    </thead>
-   {%  for a in accounts %}
-        <tr>
-           <td>{{ a[1] }}</td> <!--account number-->
-           <td>{{ a[2] }}</td> <!--sub_account-->
-           <td>{{ a[3] }}</td> <!--description-->
-           <td>{{ a[4] }}</td> <!--status-->
-
-        </tr>
-   {%  endfor %}
-    </table>
-</div>
+<h1>Your data was successfully exported!</h1>
+<p>
+    <a href="export.csv" download>Click here to download</a>
+</p>
+</body>
+</html>

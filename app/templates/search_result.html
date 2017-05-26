@@ -22,6 +22,7 @@
 <h3>
 				<a class="linkbutton" href="/index">Index</a>
 				<a class="linkbutton" href="/search">Search</a>
+				<a class="linkbutton" href="/export">Export</a>
 			    <a class="linkbutton" href="/validate">Account Validation</a>
 </h3>
 				
@@ -43,11 +44,11 @@
     <table>
     <thead>
        <tr>
-       <th>ID_User</th>
-       <th>ID_Order</th>
-       <th>User Name</th>
+       <th>User</th>
+       <th>Order</th>
+       <th>Username</th>
        <th>Email</th>
-       <th>Account Number</th>
+       <th>Account</th>
        <th>Subaccount</th>
        <th>Date_Soldon</th>
        <th>Date_Entered</th>
@@ -55,6 +56,7 @@
        <th>SubObject Code</th>
        <th>Item</th>
        <th>Item_Type</th>
+	   <th>Sales_Type</th>
        <th>Quantity</th>
        <th>Price</th>
        <th>Total Cost</th>
@@ -65,20 +67,21 @@
    {%  for u in users %}
         <tr>
            <td>{{ u[0] }}</td> <!-- iduser  -->
-           <td>{{ u[9] }}</td> <!-- idorder  -->
+           <td>{{ u[7] }}</td> <!-- idorder  --> 
            <td>{{ u[1] }}</td> <!--  username -->
            <td>{{ u[2] }}</td> <!--  email -->
-           <td>{{ u[6] }}</td> <!--  account number -->
-           <td>{{ u[7] }}</td> <!--  sub account --> 
-           <td>{{ u[10] }}</td> <!-- date soldon  -->
-           <td>{{ u[11] }}</td> <!-- date entered  -->
-           <td>{{ u[12] }}</td> <!-- obj code  -->
-           <td>{{ u[13] }}</td> <!-- sub obj  -->
-           <td>{{ u[14] }}</td> <!-- title  -->
-           <td>{{ u[15] }}</td> <!-- type  -->
-           <td>{{ u[16] }}</td> <!-- quantity  -->
-           <td>{{ u[17] }}</td> <!-- price  -->
-           <td>{{ u[18] }}</td> <!-- cost  -->
+           <td>{{ u[5] }}</td> <!--  account number --> 
+           <td>{{ u[6] }}</td> <!--  sub account --> 
+           <td>{{ u[9] }}</td> <!-- date soldon  --> 
+           <td>{{ u[10] }}</td> <!-- date entered  --> 
+           <td>{{ u[11] }}</td> <!-- obj code  --> 
+           <td>{{ u[12] }}</td> <!-- sub obj  --> 
+           <td>{{ u[13] }}</td> <!-- title  --> 
+           <td>{{ u[14] }}</td> <!-- itemtype  --> 
+		   <td>{{ u[15] }}</td> <!-- salestype  --> 
+           <td>{{ u[16] }}</td> <!-- quantity  --> 
+           <td>{{ u[17] }}</td> <!-- price  --> 
+           <td>{{ u[18] }}</td> <!-- cost  --> 
            <td>{{ u[19] }}</td> <!-- form number  -->		   
         </tr>
    {%  endfor %}

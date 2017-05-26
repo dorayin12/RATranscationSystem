@@ -23,6 +23,7 @@
 <h3>
 				<a class="linkbutton" href="/index">index</a>
 				<a class="linkbutton" href="/search">Search</a>
+				<a class="linkbutton" href="/export">Export</a>
 				<a class="linkbutton" href="/validate">Account Validation</a>
 </h3>
 				
@@ -73,11 +74,14 @@
    </select><br><br>
 
 <!--Item type-->
-   Title:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   Title:
     <input id="title" name="title"><br><br>
-  <label>Item Type:</label>
+  Item Type:&nbsp;&nbsp;&nbsp;
     <input type="radio" name="itemtypes" id="standalone" value="STANDALONE" checked /> Standalone
     <input type="radio" name="itemtypes" id="net" value="NET" /> NET <br><br>
+  Sales Type:
+    <input type="radio" name="salestype" id="iuware" value="IU Ware" checked /> IU Ware
+    <input type="radio" name="salestype" id="ra" value="RA" /> Research Analytics <br><br>
   Object Code:&nbsp;&nbsp;&nbsp;
     <input type="text" name="objectcode" value="4616"> 
   Sub-object Code:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
